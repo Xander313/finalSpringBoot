@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::title}, ~{::section}, ~{::style}, ~{::script})}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Secciones</title>
+
+  <style>
+    @import url('https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.min.css');
+    @import url('https://cdn.datatables.net/buttons/3.2.3/css/buttons.dataTables.min.css');
+
+    .list-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .actions-wrap {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .table thead th {
+      white-space: nowrap;
+    }
+
+    .table td,
+    .table th {
+      vertical-align: middle;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .objetivo-cell {
+      min-width: 280px;
+      max-width: 380px;
+      white-space: normal;
+      line-height: 1.25;
+    }
+
+    .color-chip {
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      border-radius: 50%;
+      border: 1px solid #d1d5db;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .dt-container .dt-search input,
+    .dt-container .dt-length select {
+      border-radius: 1.5rem;
+      min-height: 36px;
+    }
+
+    .dt-container .dt-buttons .dt-button {
+      border-radius: 1.5rem;
+      border: 1px solid #ced4da;
+      background: #f8f9fa;
+      color: #212529;
+      padding: 0.25rem 0.9rem;
+      margin-right: 6px;
+    }
+  </style>
+</head>
+<body>
+<section>
+  <div class="row mt-3">
+    <div class="col-lg-12 list-shell">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <div class="card-title mb-0">Lista de Secciones del Plan Ambiental</div>
+            <div class="actions-wrap">
+              <a th:href="@{/secciones-plan-ambiental/nuevo}" class="btn btn-light btn-sm">
+                <i class="fa-solid fa-plus mr-1"></i> Nueva Seccion
+              </a>
+            </div>
+          </div>
+          <hr>
+
+          <div class="table-responsive">
+            <table id="tabla-secciones" class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th>Codigo</th>
+                  <th>No.</th>
+                  <th>Titulo</th>
+                  <th>Objetivo</th>
+                  <th>Color</th>
+                  <th>Etapa</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="seccion : ${secciones}">
+                  <td th:text="${seccion.codigoSeccion}"></td>
+                  <td th:text="${seccion.numeroSeccion}"></td>
+                  <td th:text="${seccion.tituloSeccion}"></td>
+                  <td class="objetivo-cell"
+                      th:text="${seccion.objetivoSeccion != null and #strings.length(seccion.objetivoSeccion) > 120 ? #strings.substring(seccion.objetivoSeccion, 0, 120) + '...' : seccion.objetivoSeccion}"></td>
+                  <td>
+                    <span class="color-chip"
+                          th:style="${'background:' + (seccion.colorSeccion != null ? seccion.colorSeccion : '#ffffff')}"></span>
+                    <span th:text="${seccion.colorSeccion}"></span>
+                  </td>
+                  <td th:text="${seccion.fkCodEtapa}"></td>
+                  <td class="row-actions">
+                    <a class="btn btn-light btn-sm"
+                       th:href="@{/secciones-plan-ambiental/editar/{id}(id=${seccion.codigoSeccion})}">
+                      <i class="fa-solid fa-pen-to-square mr-1"></i> Editar
+                    </a>
+                    <a class="btn btn-light btn-sm js-delete"
+                       th:href="@{/secciones-plan-ambiental/eliminar/{id}(id=${seccion.codigoSeccion})}"
+                       data-entity="seccion">
+                      <i class="fa-solid fa-trash mr-1"></i> Eliminar
+                    </a>
+                  </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(secciones)}">
+                  <td colspan="7">No hay secciones registradas.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.datatables.net/2.3.1/js/dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    new DataTable('#tabla-secciones', {
+      pageLength: 10,
+      layout: {
+        topStart: {
+          buttons: [
+            { extend: 'copy', text: 'Copiar' },
+            { extend: 'csv', text: 'CSV' },
+            { extend: 'excel', text: 'Excel' },
+            { extend: 'pdf', text: 'PDF' },
+            { extend: 'print', text: 'Imprimir' }
+          ]
+        }
+      },
+      language: {
+        url: 'https://cdn.datatables.net/plug-ins/2.0.8/i18n/es-ES.json'
+      }
+    });
+
+    $(document).on('click', '.js-delete', function (event) {
+      event.preventDefault();
+
+      var href = this.getAttribute('href');
+      var entity = this.getAttribute('data-entity') || 'registro';
+      var mensaje = 'Seguro que quieres eliminar esta ' + entity + '?';
+
+      if (confirm(mensaje)) {
+        window.location.href = href;
+      }
+    });
+  });
+</script>
+</body>
+</html>

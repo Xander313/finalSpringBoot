@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:fragment="layout(pageTitle, pageContent, pageStyles, pageScripts)">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <title th:replace="${pageTitle}">Panel</title>
+
+  <link rel="icon" href="/assets/img/Fevicon.png" th:href="@{/assets/img/Fevicon.png}" type="image/png">
+
+  <link rel="stylesheet" href="/assets/vendors/bootstrap/bootstrap.min.css" th:href="@{/assets/vendors/bootstrap/bootstrap.min.css}">
+  <link rel="stylesheet" href="/assets/vendors/fontawesome/css/all.min.css" th:href="@{/assets/vendors/fontawesome/css/all.min.css}">
+  <link rel="stylesheet" href="/assets/vendors/themify-icons/themify-icons.css" th:href="@{/assets/vendors/themify-icons/themify-icons.css}">
+  <link rel="stylesheet" href="/assets/css/style.css" th:href="@{/assets/css/style.css}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+  <th:block th:replace="${pageStyles}"></th:block>
+</head>
+<body class="bg-shape">
+
+  <header class="header_area">
+    <div class="main_menu">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container box_1620">
+          <a class="navbar-brand logo_h" href="/" th:href="@{/}">
+            <img src="/assets/img/logo.png" th:src="@{/assets/img/logo.png}" alt="logo">
+          </a>
+
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                  aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+
+          <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
+            <ul class="nav navbar-nav menu_nav justify-content-end">
+              <li class="nav-item"><a class="nav-link" th:href="@{/}">Inicio</a></li>
+              <li class="nav-item"><a class="nav-link" th:href="@{/secciones-plan-ambiental}">Secciones</a></li>
+              <li class="nav-item"><a class="nav-link" th:href="@{/acciones-plan-ambiental}">Acciones</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section-margin">
+    <div class="container" th:replace="${pageContent}">
+      <!-- contenido -->
+    </div>
+  </main>
+
+  <footer class="footer-area">
+    <div class="container text-center py-3">
+      <small>Plan Ambiental</small>
+    </div>
+  </footer>
+
+  <script src="/assets/vendors/jquery/jquery-3.2.1.min.js" th:src="@{/assets/vendors/jquery/jquery-3.2.1.min.js}"></script>
+  <script src="/assets/vendors/bootstrap/bootstrap.bundle.min.js" th:src="@{/assets/vendors/bootstrap/bootstrap.bundle.min.js}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <script th:if="${mensaje}" th:inline="javascript">
+    (function () {
+      var mensaje = [[${mensaje}]];
+      var tipoMensaje = [[${tipoMensaje}]];
+
+      var borde = '#6c757d';
+      if (tipoMensaje === 'success') {
+        borde = '#198754';
+      } else if (tipoMensaje === 'error') {
+        borde = '#dc3545';
+      } else if (tipoMensaje === 'warning') {
+        borde = '#ffc107';
+      }
+
+      if (window.Toastify) {
+        Toastify({
+          text: mensaje || 'Operacion ejecutada',
+          gravity: 'top',
+          position: 'right',
+          close: true,
+          duration: 3500,
+          stopOnFocus: true,
+          style: {
+            background: '#ffffff',
+            color: '#212529',
+            border: '1px solid #dee2e6',
+            borderLeft: '4px solid ' + borde,
+            boxShadow: '0 10px 25px rgba(0,0,0,0.08)'
+          }
+        }).showToast();
+      }
+    })();
+  </script>
+
+  <th:block th:replace="${pageScripts}"></th:block>
+</body>
+</html>

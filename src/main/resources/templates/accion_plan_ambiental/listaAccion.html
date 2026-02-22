@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::title}, ~{::section}, ~{::style}, ~{::script})}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Acciones</title>
+  <style>
+    .list-shell { max-width: 1200px; margin: 0 auto; }
+    .row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+<section>
+  <div class="row mt-3">
+    <div class="col-lg-12 list-shell">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <div class="card-title mb-0">Lista de Acciones del Plan Ambiental</div>
+            <a th:href="@{/acciones-plan-ambiental/nuevo}" class="btn btn-light btn-sm">
+              <i class="fa-solid fa-plus mr-1"></i> Nueva Accion
+            </a>
+          </div>
+          <hr>
+
+          <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+              <thead>
+              <tr>
+                <th>Codigo</th>
+                <th>Aspecto</th>
+                <th>Impacto</th>
+                <th>Seccion</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="accion : ${acciones}">
+                <td th:text="${accion.codigoAccion}"></td>
+                <td th:text="${accion.aspectoAmbientalAccion}"></td>
+                <td th:text="${accion.impactoAmbientalAccion}"></td>
+                <td th:text="${accion.seccionPlanAmbiental != null ? accion.seccionPlanAmbiental.tituloSeccion : '-'}"></td>
+                <td th:text="${accion.estadoAplica}"></td>
+                <td class="row-actions">
+                  <a class="btn btn-light btn-sm" th:href="@{/acciones-plan-ambiental/editar/{id}(id=${accion.codigoAccion})}">
+                    <i class="fa-solid fa-pen-to-square mr-1"></i> Editar
+                  </a>
+                  <a class="btn btn-light btn-sm" th:href="@{/acciones-plan-ambiental/eliminar/{id}(id=${accion.codigoAccion})}">
+                    <i class="fa-solid fa-trash mr-1"></i> Eliminar
+                  </a>
+                </td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(acciones)}">
+                <td colspan="6">No hay acciones registradas.</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script></script>
+</body>
+</html>

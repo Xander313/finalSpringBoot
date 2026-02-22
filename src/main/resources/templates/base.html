@@ -19,19 +19,69 @@
   <link rel="stylesheet" href="/assets/vendors/nice-select/nice-select.css" th:href="@{/assets/vendors/nice-select/nice-select.css}">
 
   <link rel="stylesheet" href="/assets/css/style.css" th:href="@{/assets/css/style.css}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <style>
-    .main_menu .navbar {
-      padding-top: 12px;
+    .layout-content-offset {
+      padding-top: 116px;
     }
 
-    .layout-content-offset {
-      padding-top: 72px;
+    .main_menu .navbar .menu_nav {
+      margin-left: auto;
+      margin-right: 32px;
+    }
+
+    .main_menu .navbar .nav-right {
+      min-width: auto;
+    }
+
+    .main_menu .navbar .nav-right .button {
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
     }
 
     @media (max-width: 991.98px) {
       .layout-content-offset {
-        padding-top: 88px;
+        padding-top: 92px;
       }
+
+      .main_menu .navbar .menu_nav {
+        margin-right: 0;
+      }
+
+      .main_menu .navbar .nav-right {
+        padding-top: 12px;
+      }
+    }
+
+    .swal2-popup.swal2-toast.swal-toast-white {
+      background: #ffffff !important;
+      color: #4f4f4f !important;
+      border: 1px solid #dcdcdc;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
+      border-radius: 6px;
+      width: 340px;
+      padding: 12px 14px;
+    }
+
+    .swal2-popup.swal2-toast.swal-toast-white .swal2-title {
+      color: #4f4f4f;
+      font-weight: 700;
+    }
+
+    .swal2-popup.swal2-toast.swal-toast-white .swal2-html-container {
+      color: #545454;
+      margin-top: 2px;
+    }
+
+    .swal2-popup.swal2-toast.swal-toast-white .swal2-input,
+    .swal2-popup.swal2-toast.swal-toast-white .swal2-file,
+    .swal2-popup.swal2-toast.swal-toast-white .swal2-range,
+    .swal2-popup.swal2-toast.swal-toast-white .swal2-select,
+    .swal2-popup.swal2-toast.swal-toast-white .swal2-textarea,
+    .swal2-popup.swal2-toast.swal-toast-white .nice-select {
+      display: none !important;
     }
   </style>
   <th:block th:if="${pageStyles != null}" th:replace="${pageStyles}"></th:block>
@@ -43,7 +93,9 @@
     <div class="main_menu">
       <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container box_1620">
-          <a class="navbar-brand logo_h" href="index.html"><img src="img/logo.png" alt=""></a>
+          <a class="navbar-brand logo_h" th:href="@{/}">
+            <img th:src="@{/assets/img/logo.png}" alt="Safario">
+          </a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -51,33 +103,21 @@
           </button>
 
           <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
-            <ul class="nav navbar-nav menu_nav justify-content-end">
-              <li class="nav-item active"><a class="nav-link" href="index.html">Home</a></li> 
-              <li class="nav-item"><a class="nav-link" href="about.html">About</a></li> 
-              <li class="nav-item"><a class="nav-link" href="package.html">Packages</a>
-              <li class="nav-item submenu dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                  aria-expanded="false">Pages</a>
-                <ul class="dropdown-menu">
-                  <li class="nav-item"><a class="nav-link" href="amentities.html">Amentities</a>                 
-                </ul>
-							</li>
-
-              <li class="nav-item submenu dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                  aria-expanded="false">Blog</a>
-                <ul class="dropdown-menu">
-                  <li class="nav-item"><a class="nav-link" href="blog.html">Blog Single</a></li>
-                  <li class="nav-item"><a class="nav-link" href="blog-details.html">Blog Details</a></li>
-                </ul>
-							</li>
-              <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+            <ul class="nav navbar-nav menu_nav justify-content-end js-main-nav">
+              <li class="nav-item" data-path="/secciones-plan-ambiental">
+                <a class="nav-link" th:href="@{/secciones-plan-ambiental}">Secciones</a>
+              </li>
+              <li class="nav-item" data-path="/acciones-plan-ambiental">
+                <a class="nav-link" th:href="@{/acciones-plan-ambiental}">Acciones</a>
+              </li>
             </ul>
 
-            <div class="nav-right text-center text-lg-right py-4 py-lg-0">
-              <a class="button" href="#">Get Started</a>
+            <div class="nav-right text-center text-lg-right py-2 py-lg-0 d-flex flex-wrap" style="gap:8px;">
+              <a class="button" th:href="@{/logout}">
+                <i class="fa-solid fa-right-from-bracket mr-1"></i> Cerrar Sesion
+              </a>
             </div>
-          </div> 
+          </div>
         </div>
       </nav>
     </div>
@@ -563,6 +603,72 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
   <script src="/assets/js/mail-script.js" th:src="@{/assets/js/mail-script.js}"></script>
   <script src="/assets/js/skrollr.min.js" th:src="@{/assets/js/skrollr.min.js}"></script>
   <script src="/assets/js/main.js" th:src="@{/assets/js/main.js}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var currentPath = window.location.pathname.replace(/\/+$/, '');
+      if (!currentPath) {
+        currentPath = '/';
+      }
+
+      document.querySelectorAll('.js-main-nav .nav-item[data-path]').forEach(function (item) {
+        var basePath = item.getAttribute('data-path');
+        if (!basePath) {
+          return;
+        }
+
+        if (currentPath === basePath || currentPath.indexOf(basePath + '/') === 0) {
+          item.classList.add('active');
+          return;
+        }
+
+        item.classList.remove('active');
+      });
+    });
+  </script>
+
+  <script th:if="${mensaje}" th:inline="javascript">
+    (function () {
+      var mensaje = [[${mensaje}]];
+      var tipoMensaje = [[${tipoMensaje}]];
+
+      if (window.Swal) {
+        var tipo = (tipoMensaje || 'info').toLowerCase();
+        if (tipo !== 'success' && tipo !== 'error' && tipo !== 'warning' && tipo !== 'info' && tipo !== 'question') {
+          tipo = 'info';
+        }
+
+        var titulo = 'Informacion';
+        if (tipo === 'success') {
+          titulo = 'Exito';
+        } else if (tipo === 'error') {
+          titulo = 'Error';
+        } else if (tipo === 'warning') {
+          titulo = 'Advertencia';
+        }
+
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: tipo,
+          title: titulo,
+          text: mensaje || 'Operacion ejecutada',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          customClass: {
+            popup: 'swal-toast-white'
+          },
+          showClass: {
+            popup: 'swal2-show'
+          },
+          hideClass: {
+            popup: 'swal2-hide'
+          }
+        });
+      }
+    })();
+  </script>
   <th:block th:if="${pageScripts != null}" th:replace="${pageScripts}"></th:block>
 </body>
 </html>

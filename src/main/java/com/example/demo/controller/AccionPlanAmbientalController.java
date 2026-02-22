@@ -85,6 +85,8 @@ public class AccionPlanAmbientalController {
             accion.setEstadoAplica(1);
         }
 
+        accion.setColorAccion(normalizarColorAccionRgba(accion.getColorAccion()));
+
         accionPlanAmbientalRepository.save(accion);
 
         redirectAttributes.addFlashAttribute(
@@ -107,5 +109,41 @@ public class AccionPlanAmbientalController {
         redirectAttributes.addFlashAttribute("mensaje", "Acción eliminada exitosamente");
         redirectAttributes.addFlashAttribute("tipoMensaje", "success");
         return "redirect:/acciones-plan-ambiental";
+    }
+
+    private String normalizarColorAccionRgba(String color) {
+        if (color == null || color.isBlank()) {
+            return null;
+        }
+
+        String valor = color.trim();
+
+        if (valor.startsWith("rgba(") || valor.startsWith("rgb(")) {
+            return valor;
+        }
+
+        if (!valor.startsWith("#")) {
+            return valor;
+        }
+
+        String hex = valor.substring(1);
+        if (hex.length() == 3) {
+            hex = "" + hex.charAt(0) + hex.charAt(0)
+                    + hex.charAt(1) + hex.charAt(1)
+                    + hex.charAt(2) + hex.charAt(2);
+        }
+
+        if (hex.length() != 6) {
+            return valor;
+        }
+
+        try {
+            int r = Integer.parseInt(hex.substring(0, 2), 16);
+            int g = Integer.parseInt(hex.substring(2, 4), 16);
+            int b = Integer.parseInt(hex.substring(4, 6), 16);
+            return "rgba(" + r + "," + g + "," + b + ",0.2)";
+        } catch (NumberFormatException ex) {
+            return valor;
+        }
     }
 }

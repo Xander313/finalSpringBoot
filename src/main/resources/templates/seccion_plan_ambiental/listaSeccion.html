@@ -170,6 +170,24 @@
       var entity = this.getAttribute('data-entity') || 'registro';
       var mensaje = 'Seguro que quieres eliminar esta ' + entity + '?';
 
+      if (window.Swal) {
+        Swal.fire({
+          title: 'Confirmar eliminacion',
+          text: mensaje,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Si, eliminar',
+          cancelButtonText: 'Cancelar',
+          reverseButtons: true,
+          focusCancel: true
+        }).then(function (result) {
+          if (result.isConfirmed) {
+            window.location.href = href;
+          }
+        });
+        return;
+      }
+
       if (confirm(mensaje)) {
         window.location.href = href;
       }

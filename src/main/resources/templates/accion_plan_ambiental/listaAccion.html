@@ -113,22 +113,6 @@
             </div>
           </div>
           <hr>
-
-          <form class="filters-wrap" th:action="@{/acciones-plan-ambiental}" method="get">
-            <label class="mb-0" for="seccionId">Filtrar por seccion:</label>
-            <select id="seccionId" name="seccionId" class="form-control form-control-sm" style="max-width: 340px;">
-              <option value="">Todas las secciones</option>
-              <option th:each="seccion : ${secciones}"
-                      th:value="${seccion.codigoSeccion}"
-                      th:text="${seccion.numeroSeccion + ' - ' + seccion.tituloSeccion}"
-                      th:selected="${seccionIdSeleccionada != null and seccionIdSeleccionada == seccion.codigoSeccion}">
-              </option>
-            </select>
-            <button type="submit" class="btn btn-light btn-sm">
-              <i class="fa-solid fa-filter mr-1"></i> Filtrar
-            </button>
-          </form>
-
           <div class="table-responsive">
             <table id="tabla-acciones" class="table table-striped table-bordered">
               <thead>
@@ -235,6 +219,24 @@
       var href = this.getAttribute('href');
       var entity = this.getAttribute('data-entity') || 'registro';
       var mensaje = 'Seguro que quieres eliminar esta ' + entity + '?';
+
+      if (window.Swal) {
+        Swal.fire({
+          title: 'Confirmar eliminacion',
+          text: mensaje,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Si, eliminar',
+          cancelButtonText: 'Cancelar',
+          reverseButtons: true,
+          focusCancel: true
+        }).then(function (result) {
+          if (result.isConfirmed) {
+            window.location.href = href;
+          }
+        });
+        return;
+      }
 
       if (confirm(mensaje)) {
         window.location.href = href;

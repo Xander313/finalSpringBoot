@@ -90,8 +90,9 @@
 
               <div class="col-md-3">
                 <div class="form-group">
-                  <label for="colorAccion">Color de la accion</label>
-                  <input type="color" class="form-control form-control-rounded p-1" id="colorAccion" th:field="*{colorAccion}">
+                  <label for="colorAccionPicker">Color de la accion</label>
+                  <input type="color" class="form-control form-control-rounded p-1" id="colorAccionPicker" value="#abb1a9">
+                  <input type="hidden" th:field="*{colorAccion}" id="colorAccion">
                 </div>
               </div>
 
@@ -211,6 +212,74 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/localization/messages_es.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    var colorPicker = document.getElementById('colorAccionPicker');
+    var colorHidden = document.getElementById('colorAccion');
+    var defaultAlpha = 0.2;
+
+    var hexToRgba = function (hex, alpha) {
+      if (!hex) {
+        return '';
+      }
+
+      var normalized = hex.replace('#', '');
+      if (normalized.length === 3) {
+        normalized = normalized.split('').map(function (c) {
+          return c + c;
+        }).join('');
+      }
+
+      if (normalized.length !== 6) {
+        return '';
+      }
+
+      var r = parseInt(normalized.substring(0, 2), 16);
+      var g = parseInt(normalized.substring(2, 4), 16);
+      var b = parseInt(normalized.substring(4, 6), 16);
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+    };
+
+    var rgbaToHex = function (rgba) {
+      if (!rgba) {
+        return null;
+      }
+
+      var match = rgba.match(/rgba?\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})/i);
+      if (!match) {
+        return null;
+      }
+
+      var toHex = function (value) {
+        var intValue = Math.max(0, Math.min(255, parseInt(value, 10)));
+        return intValue.toString(16).padStart(2, '0');
+      };
+
+      return '#' + toHex(match[1]) + toHex(match[2]) + toHex(match[3]);
+    };
+
+    var syncColorRgba = function () {
+      if (!colorPicker || !colorHidden) {
+        return;
+      }
+      colorHidden.value = hexToRgba(colorPicker.value, defaultAlpha);
+    };
+
+    if (colorPicker && colorHidden) {
+      if (colorHidden.value) {
+        if (colorHidden.value.startsWith('rgba') || colorHidden.value.startsWith('rgb')) {
+          var fromRgba = rgbaToHex(colorHidden.value);
+          if (fromRgba) {
+            colorPicker.value = fromRgba;
+          }
+        } else if (colorHidden.value.startsWith('#')) {
+          colorPicker.value = colorHidden.value;
+        }
+      }
+
+      syncColorRgba();
+      colorPicker.addEventListener('input', syncColorRgba);
+      colorPicker.addEventListener('change', syncColorRgba);
+    }
+
     document.querySelectorAll('.form-group').forEach(function (group) {
       var field = group.querySelector('input:not([type="hidden"]):not([type="color"]), select, textarea');
       if (!field) {

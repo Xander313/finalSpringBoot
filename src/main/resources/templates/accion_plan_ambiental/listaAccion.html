@@ -4,10 +4,95 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lista de Acciones</title>
+  <title>Lista de Acciones del Plan Ambiental</title>
+
   <style>
-    .list-shell { max-width: 1200px; margin: 0 auto; }
-    .row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    @import url('https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.min.css');
+    @import url('https://cdn.datatables.net/buttons/3.2.3/css/buttons.dataTables.min.css');
+
+    .list-shell {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .filters-wrap {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .actions-wrap {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .table td,
+    .table th {
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .truncate-cell {
+      max-width: 260px;
+      white-space: normal;
+      line-height: 1.25;
+    }
+
+    .color-chip {
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      border-radius: 50%;
+      border: 1px solid #d1d5db;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .state-pill {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+
+    .state-1 {
+      color: #166534;
+      background: #dcfce7;
+      border-color: #86efac;
+    }
+
+    .state-0 {
+      color: #7f1d1d;
+      background: #fee2e2;
+      border-color: #fca5a5;
+    }
+
+    .dt-container .dt-search input,
+    .dt-container .dt-length select {
+      border-radius: 1.5rem;
+      min-height: 36px;
+    }
+
+    .dt-container .dt-buttons .dt-button {
+      border-radius: 1.5rem;
+      border: 1px solid #ced4da;
+      background: #f8f9fa;
+      color: #212529;
+      padding: 0.25rem 0.9rem;
+      margin-right: 6px;
+    }
   </style>
 </head>
 <body>
@@ -18,42 +103,95 @@
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center flex-wrap">
             <div class="card-title mb-0">Lista de Acciones del Plan Ambiental</div>
-            <a th:href="@{/acciones-plan-ambiental/nuevo}" class="btn btn-light btn-sm">
-              <i class="fa-solid fa-plus mr-1"></i> Nueva Accion
-            </a>
+            <div class="actions-wrap">
+              <a th:href="@{/acciones-plan-ambiental}" class="btn btn-light btn-sm">
+                <i class="fa-solid fa-rotate-left mr-1"></i> Reiniciar
+              </a>
+              <a th:href="@{/acciones-plan-ambiental/nuevo}" class="btn btn-light btn-sm">
+                <i class="fa-solid fa-plus mr-1"></i> Nueva Accion
+              </a>
+            </div>
           </div>
           <hr>
 
+          <form class="filters-wrap" th:action="@{/acciones-plan-ambiental}" method="get">
+            <label class="mb-0" for="seccionId">Filtrar por seccion:</label>
+            <select id="seccionId" name="seccionId" class="form-control form-control-sm" style="max-width: 340px;">
+              <option value="">Todas las secciones</option>
+              <option th:each="seccion : ${secciones}"
+                      th:value="${seccion.codigoSeccion}"
+                      th:text="${seccion.numeroSeccion + ' - ' + seccion.tituloSeccion}"
+                      th:selected="${seccionIdSeleccionada != null and seccionIdSeleccionada == seccion.codigoSeccion}">
+              </option>
+            </select>
+            <button type="submit" class="btn btn-light btn-sm">
+              <i class="fa-solid fa-filter mr-1"></i> Filtrar
+            </button>
+          </form>
+
           <div class="table-responsive">
-            <table class="table table-striped table-bordered">
+            <table id="tabla-acciones" class="table table-striped table-bordered">
               <thead>
               <tr>
                 <th>Codigo</th>
+                <th>Seccion</th>
                 <th>Aspecto</th>
                 <th>Impacto</th>
-                <th>Seccion</th>
+                <th>Medidas propuestas</th>
+                <th>Indicador</th>
+                <th>Numerador</th>
+                <th>Denominador</th>
+                <th>Valor</th>
+                <th>Frecuencia</th>
+                <th>Periodo</th>
                 <th>Estado</th>
+                <th>Color</th>
                 <th>Acciones</th>
               </tr>
               </thead>
               <tbody>
               <tr th:each="accion : ${acciones}">
                 <td th:text="${accion.codigoAccion}"></td>
-                <td th:text="${accion.aspectoAmbientalAccion}"></td>
-                <td th:text="${accion.impactoAmbientalAccion}"></td>
                 <td th:text="${accion.seccionPlanAmbiental != null ? accion.seccionPlanAmbiental.tituloSeccion : '-'}"></td>
-                <td th:text="${accion.estadoAplica}"></td>
+                <td class="truncate-cell"
+                    th:text="${accion.aspectoAmbientalAccion != null and #strings.length(accion.aspectoAmbientalAccion) > 120 ? #strings.substring(accion.aspectoAmbientalAccion, 0, 120) + '...' : accion.aspectoAmbientalAccion}">
+                </td>
+                <td class="truncate-cell"
+                    th:text="${accion.impactoAmbientalAccion != null and #strings.length(accion.impactoAmbientalAccion) > 120 ? #strings.substring(accion.impactoAmbientalAccion, 0, 120) + '...' : accion.impactoAmbientalAccion}">
+                </td>
+                <td class="truncate-cell"
+                    th:text="${accion.medidasPropuestasAccion != null and #strings.length(accion.medidasPropuestasAccion) > 120 ? #strings.substring(accion.medidasPropuestasAccion, 0, 120) + '...' : accion.medidasPropuestasAccion}">
+                </td>
+                <td th:text="${accion.indicadorPlaceholderAccion}"></td>
+                <td th:text="${accion.numeradorValorAccion}"></td>
+                <td th:text="${accion.denominadorValorAccion}"></td>
+                <td th:text="${accion.valorAccion}"></td>
+                <td th:text="${accion.frecuenciaAccion}"></td>
+                <td th:text="${accion.periodoAccion}"></td>
+                <td>
+                  <span class="state-pill"
+                        th:classappend="${accion.estadoAplica != null and accion.estadoAplica == 1} ? ' state-1' : ' state-0'"
+                        th:text="${accion.estadoAplica != null and accion.estadoAplica == 1} ? 'APLICA' : 'NO APLICA'">
+                  </span>
+                </td>
+                <td>
+                  <span class="color-chip"
+                        th:style="${'background:' + (accion.colorAccion != null ? accion.colorAccion : '#ffffff')}"></span>
+                  <span th:text="${accion.colorAccion}"></span>
+                </td>
                 <td class="row-actions">
                   <a class="btn btn-light btn-sm" th:href="@{/acciones-plan-ambiental/editar/{id}(id=${accion.codigoAccion})}">
                     <i class="fa-solid fa-pen-to-square mr-1"></i> Editar
                   </a>
-                  <a class="btn btn-light btn-sm" th:href="@{/acciones-plan-ambiental/eliminar/{id}(id=${accion.codigoAccion})}">
+                  <a class="btn btn-light btn-sm js-delete"
+                     th:href="@{/acciones-plan-ambiental/eliminar/{id}(id=${accion.codigoAccion})}"
+                     data-entity="accion">
                     <i class="fa-solid fa-trash mr-1"></i> Eliminar
                   </a>
                 </td>
               </tr>
               <tr th:if="${#lists.isEmpty(acciones)}">
-                <td colspan="6">No hay acciones registradas.</td>
+                <td colspan="14">No hay acciones registradas.</td>
               </tr>
               </tbody>
             </table>
@@ -63,6 +201,46 @@
     </div>
   </div>
 </section>
-<script></script>
+
+<script src="https://cdn.datatables.net/2.3.1/js/dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.3/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    new DataTable('#tabla-acciones', {
+      pageLength: 10,
+      layout: {
+        topStart: {
+          buttons: [
+            { extend: 'copy', text: 'Copiar' },
+            { extend: 'csv', text: 'CSV' },
+            { extend: 'excel', text: 'Excel' },
+            { extend: 'pdf', text: 'PDF' },
+            { extend: 'print', text: 'Imprimir' }
+          ]
+        }
+      },
+      language: {
+        url: 'https://cdn.datatables.net/plug-ins/2.0.8/i18n/es-ES.json'
+      }
+    });
+
+    $(document).on('click', '.js-delete', function (event) {
+      event.preventDefault();
+
+      var href = this.getAttribute('href');
+      var entity = this.getAttribute('data-entity') || 'registro';
+      var mensaje = 'Seguro que quieres eliminar esta ' + entity + '?';
+
+      if (confirm(mensaje)) {
+        window.location.href = href;
+      }
+    });
+  });
+</script>
 </body>
 </html>

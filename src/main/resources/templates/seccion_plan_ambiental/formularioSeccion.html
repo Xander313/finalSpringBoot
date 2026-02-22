@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::title}, ~{::section}, ~{::style}, ~{::script})}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${seccion.codigoSeccion} ? 'Editar Seccion' : 'Nueva Seccion'">Formulario Seccion</title>
+
+  <style>
+    .form-shell {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .actions-wrap {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .optional-hint {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+      color: #28a745 !important;
+    }
+
+    .field-error {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+      color: #dc3545;
+    }
+
+    .timestamp-box {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 0.75rem;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #495057;
+    }
+  </style>
+</head>
+<body>
+<section>
+  <div class="row mt-3">
+    <div class="col-lg-12 form-shell">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <div class="card-title mb-0"
+                 th:text="${seccion.codigoSeccion} ? 'Editar Seccion del Plan Ambiental' : 'Nueva Seccion del Plan Ambiental'">
+              Nueva Seccion del Plan Ambiental
+            </div>
+            <a th:href="@{/secciones-plan-ambiental}" class="btn btn-light btn-sm">
+              <i class="fa-solid fa-arrow-left mr-1"></i> Volver
+            </a>
+          </div>
+          <hr>
+
+          <form id="seccion-form" th:action="@{/secciones-plan-ambiental/guardar}" th:object="${seccion}" method="post" novalidate>
+            <input type="hidden" th:field="*{codigoSeccion}">
+
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="numeroSeccion">Numero de la seccion *</label>
+                  <input type="number" class="form-control form-control-rounded" id="numeroSeccion"
+                         th:field="*{numeroSeccion}" min="1" placeholder="Numero de la seccion" required>
+                </div>
+              </div>
+
+              <div class="col-md-8">
+                <div class="form-group">
+                  <label for="tituloSeccion">Titulo de la seccion *</label>
+                  <input type="text" class="form-control form-control-rounded" id="tituloSeccion"
+                         th:field="*{tituloSeccion}" maxlength="255" placeholder="Titulo de la seccion" required>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="colorSeccion">Color de la seccion</label>
+                  <input type="color" class="form-control form-control-rounded p-1" id="colorSeccion"
+                         th:field="*{colorSeccion}">
+                </div>
+              </div>
+
+              <div class="col-md-8">
+                <div class="form-group">
+                  <label for="fkCodEtapa">Codigo de etapa</label>
+                  <input type="number" class="form-control form-control-rounded" id="fkCodEtapa"
+                         th:field="*{fkCodEtapa}" min="1" placeholder="Codigo de etapa">
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="form-group">
+                  <label for="objetivoSeccion">Objetivo de la seccion *</label>
+                  <textarea class="form-control" id="objetivoSeccion" rows="5"
+                            th:field="*{objetivoSeccion}" placeholder="Objetivo de la seccion" required></textarea>
+                </div>
+              </div>
+
+              <div class="col-md-6" th:if="${seccion.fechaCreadoSeccion != null}">
+                <div class="form-group">
+                  <label>Fecha de creacion</label>
+                  <div class="timestamp-box" th:text="${#temporals.format(seccion.fechaCreadoSeccion, 'yyyy-MM-dd HH:mm:ss')}"></div>
+                </div>
+              </div>
+
+              <div class="col-md-6" th:if="${seccion.fechaEditadoSeccion != null}">
+                <div class="form-group">
+                  <label>Fecha de ultima edicion</label>
+                  <div class="timestamp-box" th:text="${#temporals.format(seccion.fechaEditadoSeccion, 'yyyy-MM-dd HH:mm:ss')}"></div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="form-group mb-0 actions-wrap">
+                  <a class="btn btn-light px-5" th:href="@{/secciones-plan-ambiental}">
+                    <i class="fa-solid fa-xmark mr-1"></i> Cancelar
+                  </a>
+                  <button type="submit" class="btn btn-light px-5">
+                    <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/localization/messages_es.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.form-group').forEach(function (group) {
+      var field = group.querySelector('input:not([type="hidden"]):not([type="color"]), select, textarea');
+      if (!field) {
+        return;
+      }
+
+      if (field.hasAttribute('required')) {
+        return;
+      }
+
+      if (group.querySelector('.optional-hint')) {
+        return;
+      }
+
+      var hint = document.createElement('small');
+      hint.className = 'form-text optional-hint';
+      hint.textContent = 'Opcional';
+      group.appendChild(hint);
+    });
+
+    if (window.jQuery && $.fn.validate) {
+      var trimValue = function (value) {
+        return $.trim(value);
+      };
+
+      $('#seccion-form').validate({
+        rules: {
+          numeroSeccion: {
+            required: true,
+            digits: true,
+            min: 1
+          },
+          tituloSeccion: {
+            required: true,
+            minlength: 3,
+            maxlength: 255,
+            normalizer: trimValue
+          },
+          objetivoSeccion: {
+            required: true,
+            minlength: 3,
+            normalizer: trimValue
+          },
+          colorSeccion: {
+            maxlength: 25
+          },
+          fkCodEtapa: {
+            digits: true,
+            min: 1
+          }
+        },
+        messages: {
+          numeroSeccion: {
+            required: 'Ingrese el numero de la seccion',
+            digits: 'Ingrese solo numeros',
+            min: 'El numero de seccion debe ser mayor a 0'
+          },
+          tituloSeccion: {
+            required: 'Ingrese el titulo de la seccion',
+            minlength: 'Minimo 3 caracteres',
+            maxlength: 'Maximo 255 caracteres'
+          },
+          objetivoSeccion: {
+            required: 'Ingrese el objetivo de la seccion',
+            minlength: 'Minimo 3 caracteres'
+          },
+          colorSeccion: {
+            maxlength: 'Maximo 25 caracteres'
+          },
+          fkCodEtapa: {
+            digits: 'Ingrese solo numeros en codigo de etapa',
+            min: 'El codigo de etapa debe ser mayor a 0'
+          }
+        },
+        errorElement: 'small',
+        errorClass: 'field-error',
+        highlight: function (element) {
+          $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element) {
+          $(element).removeClass('is-invalid');
+        }
+      });
+    }
+  });
+</script>
+</body>
+</html>

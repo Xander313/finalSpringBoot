@@ -34,7 +34,7 @@ public class SeccionPlanAmbientalController {
     @GetMapping("/nuevo")
     public String nuevo(Model model) {
         model.addAttribute("seccion", new SeccionPlanAmbientalEntity());
-        return "seccion_plan_ambiental/form_seccion";
+        return "seccion_plan_ambiental/formularioSeccion";
     }
 
     @GetMapping("/editar/{id}")
@@ -43,7 +43,7 @@ public class SeccionPlanAmbientalController {
                 .orElseThrow(() -> new IllegalArgumentException("ID de sección inválido: " + id));
 
         model.addAttribute("seccion", seccion);
-        return "seccion_plan_ambiental/form_seccion";
+        return "seccion_plan_ambiental/formularioSeccion";
     }
 
     @PostMapping("/guardar")

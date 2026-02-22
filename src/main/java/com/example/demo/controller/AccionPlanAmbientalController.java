@@ -51,7 +51,7 @@ public class AccionPlanAmbientalController {
     public String nuevo(Model model) {
         model.addAttribute("accion", new AccionPlanAmbientalEntity());
         model.addAttribute("secciones", seccionPlanAmbientalRepository.findAll());
-        return "accion_plan_ambiental/form_accion";
+        return "accion_plan_ambiental/formularioAccion";
     }
 
     @GetMapping("/editar/{id}")
@@ -61,7 +61,7 @@ public class AccionPlanAmbientalController {
 
         model.addAttribute("accion", accion);
         model.addAttribute("secciones", seccionPlanAmbientalRepository.findAll());
-        return "accion_plan_ambiental/form_accion";
+        return "accion_plan_ambiental/formularioAccion";
     }
 
     @PostMapping("/guardar")

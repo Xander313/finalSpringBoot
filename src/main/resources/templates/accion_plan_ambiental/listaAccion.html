@@ -104,10 +104,10 @@
           <div class="d-flex justify-content-between align-items-center flex-wrap">
             <div class="card-title mb-0">Lista de Acciones del Plan Ambiental</div>
             <div class="actions-wrap">
-              <a th:href="@{/acciones-plan-ambiental}" class="btn btn-light btn-sm">
+              <a th:href="@{/acciones-plan-ambiental}" class="btn btn-secondary btn-sm">
                 <i class="fa-solid fa-rotate-left mr-1"></i> Reiniciar
               </a>
-              <a th:href="@{/acciones-plan-ambiental/nuevo}" class="btn btn-light btn-sm">
+              <a th:href="@{/acciones-plan-ambiental/nuevo}" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-plus mr-1"></i> Nueva Accion
               </a>
             </div>
@@ -164,10 +164,10 @@
                   <span th:text="${accion.colorAccion}"></span>
                 </td>
                 <td class="row-actions">
-                  <a class="btn btn-light btn-sm" th:href="@{/acciones-plan-ambiental/editar/{id}(id=${accion.codigoAccion})}">
+                  <a class="btn btn-warning btn-sm text-dark" th:href="@{/acciones-plan-ambiental/editar/{id}(id=${accion.codigoAccion})}">
                     <i class="fa-solid fa-pen-to-square mr-1"></i> Editar
                   </a>
-                  <a class="btn btn-light btn-sm js-delete"
+                  <a class="btn btn-danger btn-sm js-delete"
                      th:href="@{/acciones-plan-ambiental/eliminar/{id}(id=${accion.codigoAccion})}"
                      data-entity="accion">
                     <i class="fa-solid fa-trash mr-1"></i> Eliminar

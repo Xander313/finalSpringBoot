@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
@@ -24,6 +26,9 @@ public class SeccionPlanAmbientalEntity {
     private Long codigoSeccion;
 
     @Column(name = "numero_seccion")
+    @NotNull(message = "Ingrese el numero de la seccion")
+    @Min(value = 1, message = "El numero de la seccion debe estar entre 1 y 5")
+    @Max(value = 5, message = "El numero de la seccion debe estar entre 1 y 5")
     private Integer numeroSeccion;
 
     @Column(name = "titulo_seccion", length = 255)

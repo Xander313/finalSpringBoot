@@ -18,13 +18,6 @@
       flex-wrap: wrap;
     }
 
-    .optional-hint {
-      display: block;
-      margin-top: 4px;
-      font-size: 12px;
-      color: #28a745 !important;
-    }
-
     .field-error {
       display: block;
       margin-top: 4px;
@@ -39,6 +32,19 @@
       padding: 12px 14px;
       font-size: 13px;
       color: #495057;
+    }
+
+    #seccion-form .form-group label {
+      display: block;
+    }
+
+    #seccion-form .form-group .nice-select {
+      float: none;
+      width: 100%;
+    }
+
+    #seccion-form .form-group .nice-select.is-invalid {
+      border-color: #dc3545 !important;
     }
 
     #seccion-form .nice-select .list {
@@ -59,7 +65,7 @@
                  th:text="${seccion.codigoSeccion} ? 'Editar Seccion del Plan Ambiental' : 'Nueva Seccion del Plan Ambiental'">
               Nueva Seccion del Plan Ambiental
             </div>
-            <a th:href="@{/secciones-plan-ambiental}" class="btn btn-light btn-sm">
+            <a th:href="@{/secciones-plan-ambiental}" class="btn btn-secondary btn-sm">
               <i class="fa-solid fa-arrow-left mr-1"></i> Volver
             </a>
           </div>
@@ -73,7 +79,7 @@
                 <div class="form-group">
                   <label for="numeroSeccion">Numero de la seccion *</label>
                   <input type="number" class="form-control form-control-rounded" id="numeroSeccion"
-                         th:field="*{numeroSeccion}" min="1" placeholder="Numero de la seccion" required>
+                         th:field="*{numeroSeccion}" min="1" max="5" step="1" placeholder="Numero de la seccion (1 a 5)" required>
                 </div>
               </div>
 
@@ -134,10 +140,10 @@
 
               <div class="col-12">
                 <div class="form-group mb-0 actions-wrap">
-                  <a class="btn btn-light px-5" th:href="@{/secciones-plan-ambiental}">
+                  <a class="btn btn-secondary px-5" th:href="@{/secciones-plan-ambiental}">
                     <i class="fa-solid fa-xmark mr-1"></i> Cancelar
                   </a>
-                  <button type="submit" class="btn btn-light px-5">
+                  <button type="submit" class="btn btn-success px-5">
                     <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar
                   </button>
                 </div>
@@ -222,37 +228,19 @@
       colorPicker.addEventListener('change', syncColorRgba);
     }
 
-    document.querySelectorAll('.form-group').forEach(function (group) {
-      var field = group.querySelector('input:not([type="hidden"]):not([type="color"]), select, textarea');
-      if (!field) {
-        return;
-      }
-
-      if (field.hasAttribute('required')) {
-        return;
-      }
-
-      if (group.querySelector('.optional-hint')) {
-        return;
-      }
-
-      var hint = document.createElement('small');
-      hint.className = 'form-text optional-hint';
-      hint.textContent = 'Opcional';
-      group.appendChild(hint);
-    });
-
     if (window.jQuery && $.fn.validate) {
       var trimValue = function (value) {
         return $.trim(value);
       };
 
       $('#seccion-form').validate({
+        ignore: [],
         rules: {
           numeroSeccion: {
             required: true,
             digits: true,
-            min: 1
+            min: 1,
+            max: 5
           },
           tituloSeccion: {
             required: true,
@@ -276,7 +264,8 @@
           numeroSeccion: {
             required: 'Ingrese el numero de la seccion',
             digits: 'Ingrese solo numeros',
-            min: 'El numero de seccion debe ser mayor a 0'
+            min: 'El numero de la seccion debe ser minimo 1',
+            max: 'El numero de la seccion debe ser maximo 5'
           },
           tituloSeccion: {
             required: 'Ingrese el titulo de la seccion',
@@ -296,11 +285,29 @@
         },
         errorElement: 'small',
         errorClass: 'field-error',
+        errorPlacement: function (error, element) {
+          if (element.is('select') && element.next('.nice-select').length) {
+            error.insertAfter(element.next('.nice-select'));
+            return;
+          }
+
+          error.insertAfter(element);
+        },
         highlight: function (element) {
-          $(element).addClass('is-invalid');
+          var $element = $(element);
+          $element.addClass('is-invalid');
+
+          if ($element.is('select') && $element.next('.nice-select').length) {
+            $element.next('.nice-select').addClass('is-invalid');
+          }
         },
         unhighlight: function (element) {
-          $(element).removeClass('is-invalid');
+          var $element = $(element);
+          $element.removeClass('is-invalid');
+
+          if ($element.is('select') && $element.next('.nice-select').length) {
+            $element.next('.nice-select').removeClass('is-invalid');
+          }
         }
       });
     }

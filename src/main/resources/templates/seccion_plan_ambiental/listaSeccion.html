@@ -78,7 +78,7 @@
           <div class="d-flex justify-content-between align-items-center flex-wrap">
             <div class="card-title mb-0">Lista de Secciones del Plan Ambiental</div>
             <div class="actions-wrap">
-              <a th:href="@{/secciones-plan-ambiental/nuevo}" class="btn btn-light btn-sm">
+              <a th:href="@{/secciones-plan-ambiental/nuevo}" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-plus mr-1"></i> Nueva Seccion
               </a>
             </div>
@@ -112,11 +112,11 @@
                   </td>
                   <td th:text="${seccion.fkCodEtapa}"></td>
                   <td class="row-actions">
-                    <a class="btn btn-light btn-sm"
+                    <a class="btn btn-warning btn-sm text-dark"
                        th:href="@{/secciones-plan-ambiental/editar/{id}(id=${seccion.codigoSeccion})}">
                       <i class="fa-solid fa-pen-to-square mr-1"></i> Editar
                     </a>
-                    <a class="btn btn-light btn-sm js-delete"
+                    <a class="btn btn-danger btn-sm js-delete"
                        th:href="@{/secciones-plan-ambiental/eliminar/{id}(id=${seccion.codigoSeccion})}"
                        data-entity="seccion">
                       <i class="fa-solid fa-trash mr-1"></i> Eliminar

@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.entity.EtapaPlanAmbientalEntity;
 import com.example.demo.entity.SeccionPlanAmbientalEntity;
+import com.example.demo.repository.AccionPlanAmbientalRepository;
 import com.example.demo.repository.EtapaPlanAmbientalRepository;
 import com.example.demo.repository.SeccionPlanAmbientalRepository;
 
@@ -25,13 +26,16 @@ public class SeccionPlanAmbientalController {
 
     private final SeccionPlanAmbientalRepository seccionPlanAmbientalRepository;
     private final EtapaPlanAmbientalRepository etapaPlanAmbientalRepository;
+    private final AccionPlanAmbientalRepository accionPlanAmbientalRepository;
 
     public SeccionPlanAmbientalController(
             SeccionPlanAmbientalRepository seccionPlanAmbientalRepository,
-            EtapaPlanAmbientalRepository etapaPlanAmbientalRepository
+            EtapaPlanAmbientalRepository etapaPlanAmbientalRepository,
+            AccionPlanAmbientalRepository accionPlanAmbientalRepository
     ) {
         this.seccionPlanAmbientalRepository = seccionPlanAmbientalRepository;
         this.etapaPlanAmbientalRepository = etapaPlanAmbientalRepository;
+        this.accionPlanAmbientalRepository = accionPlanAmbientalRepository;
     }
 
     @GetMapping
@@ -84,6 +88,16 @@ public class SeccionPlanAmbientalController {
     public String eliminar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         if (!seccionPlanAmbientalRepository.existsById(id)) {
             redirectAttributes.addFlashAttribute("mensaje", "Sección no encontrada");
+            redirectAttributes.addFlashAttribute("tipoMensaje", "error");
+            return "redirect:/secciones-plan-ambiental";
+        }
+
+        long totalAccionesRelacionadas = accionPlanAmbientalRepository.countBySeccionPlanAmbientalCodigoSeccion(id);
+        if (totalAccionesRelacionadas > 0) {
+            redirectAttributes.addFlashAttribute(
+                    "mensaje",
+                    "No se puede eliminar la sección porque tiene acciones relacionadas"
+            );
             redirectAttributes.addFlashAttribute("tipoMensaje", "error");
             return "redirect:/secciones-plan-ambiental";
         }

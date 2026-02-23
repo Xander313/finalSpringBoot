@@ -63,5 +63,23 @@
     </div>
   </div>
 </section>
+
+<script th:if="${param.loginSuccess}">
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.Swal) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Bienvenido',
+        text: 'Inicio de sesion exitoso',
+        timer: 2200,
+        showConfirmButton: false
+      });
+    }
+
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState({}, document.title, '/home');
+    }
+  });
+</script>
 </body>
 </html>

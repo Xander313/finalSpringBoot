@@ -44,10 +44,6 @@
         Usuario o contrasena incorrectos.
       </div>
 
-      <div th:if="${param.logout}" class="alert alert-success py-2 mb-3">
-        Sesion cerrada correctamente.
-      </div>
-
       <div th:if="${param.registered}" class="alert alert-success py-2 mb-3">
         Cuenta creada correctamente. Ya puedes iniciar sesion.
       </div>
@@ -85,5 +81,23 @@
 
   <script th:src="@{/assets/vendors/jquery/jquery-3.2.1.min.js}"></script>
   <script th:src="@{/assets/vendors/bootstrap/bootstrap.bundle.min.js}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script th:if="${param.logout}">
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.Swal) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Sesion cerrada',
+          text: 'Has cerrado sesion correctamente',
+          timer: 2200,
+          showConfirmButton: false
+        });
+      }
+
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({}, document.title, '/');
+      }
+    });
+  </script>
 </body>
 </html>

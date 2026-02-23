@@ -116,9 +116,11 @@
             </ul>
 
             <div class="nav-right text-center text-lg-right py-2 py-lg-0 d-flex flex-wrap" style="gap:8px;">
-              <a class="button" th:href="@{/logout}">
-                <i class="fa-solid fa-right-from-bracket mr-1"></i> Cerrar Sesion
-              </a>
+              <form th:action="@{/logout}" method="post" class="mb-0">
+                <button type="submit" class="button border-0">
+                  <i class="fa-solid fa-right-from-bracket mr-1"></i> Cerrar Sesion
+                </button>
+              </form>
             </div>
           </div>
         </div>

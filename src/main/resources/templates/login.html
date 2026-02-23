@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesion</title>
+
+  <link rel="stylesheet" th:href="@{/assets/vendors/bootstrap/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/assets/vendors/fontawesome/css/all.min.css}">
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f4f6f8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      border: 1px solid #dee2e6;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .login-card .card-body {
+      padding: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card card">
+    <div class="card-body">
+      <h4 class="mb-1">Iniciar sesion</h4>
+      <p class="text-muted mb-4">Ingresa tus credenciales para continuar</p>
+
+      <div th:if="${param.error}" class="alert alert-danger py-2 mb-3">
+        Usuario o contrasena incorrectos.
+      </div>
+
+      <div th:if="${param.logout}" class="alert alert-success py-2 mb-3">
+        Sesion cerrada correctamente.
+      </div>
+
+      <div th:if="${param.registered}" class="alert alert-success py-2 mb-3">
+        Cuenta creada correctamente. Ya puedes iniciar sesion.
+      </div>
+
+      <div th:if="${param.resetSuccess}" class="alert alert-success py-2 mb-3">
+        Contrasena actualizada correctamente.
+      </div>
+
+      <form th:action="@{/login}" method="post">
+        <div class="form-group">
+          <label for="username">Usuario</label>
+          <input id="username" name="username" type="text" class="form-control" autocomplete="username" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Contrasena</label>
+          <input id="password" name="password" type="password" class="form-control" autocomplete="current-password" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">
+          <i class="fa-solid fa-right-to-bracket mr-1"></i> Entrar
+        </button>
+      </form>
+
+      <hr>
+
+      <a class="btn btn-outline-primary btn-block" th:href="@{/registro}">
+        No tienes cuenta? Crear una
+      </a>
+      <a class="btn btn-outline-secondary btn-block" th:href="@{/password/forgot}">
+        Olvido su contrasena
+      </a>
+    </div>
+  </div>
+
+  <script th:src="@{/assets/vendors/jquery/jquery-3.2.1.min.js}"></script>
+  <script th:src="@{/assets/vendors/bootstrap/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

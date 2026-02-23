@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:fragment="layout(pageTitle, pageContent, pageStyles, pageScripts)">
 <head>
   <meta charset="UTF-8">
@@ -106,7 +106,7 @@
           </button>
 
           <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
-            <ul class="nav navbar-nav menu_nav justify-content-end js-main-nav">
+            <ul class="nav navbar-nav menu_nav justify-content-end js-main-nav" sec:authorize="isAuthenticated()">
               <li class="nav-item" data-path="/secciones-plan-ambiental">
                 <a class="nav-link" th:href="@{/secciones-plan-ambiental}">Secciones</a>
               </li>
@@ -115,7 +115,8 @@
               </li>
             </ul>
 
-            <div class="nav-right text-center text-lg-right py-2 py-lg-0 d-flex flex-wrap" style="gap:8px;">
+            <div class="nav-right text-center text-lg-right py-2 py-lg-0 d-flex flex-wrap"
+                 style="gap:8px;" sec:authorize="isAuthenticated()">
               <form th:action="@{/logout}" method="post" class="mb-0">
                 <button type="submit" class="button border-0">
                   <i class="fa-solid fa-right-from-bracket mr-1"></i> Cerrar Sesion

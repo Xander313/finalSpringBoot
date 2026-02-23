@@ -40,6 +40,12 @@
       font-size: 13px;
       color: #495057;
     }
+
+    #seccion-form .nice-select .list {
+      max-height: 280px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
   </style>
 </head>
 <body>
@@ -81,17 +87,26 @@
 
               <div class="col-md-4">
                 <div class="form-group">
-                  <label for="colorSeccion">Color de la seccion</label>
-                  <input type="color" class="form-control form-control-rounded p-1" id="colorSeccion"
-                         th:field="*{colorSeccion}">
+                  <label for="colorSeccionPicker">Color de la seccion</label>
+                  <input type="color" class="form-control form-control-rounded p-1" id="colorSeccionPicker" value="#abb1a9">
+                  <input type="hidden" th:field="*{colorSeccion}" id="colorSeccion">
                 </div>
               </div>
 
               <div class="col-md-8">
                 <div class="form-group">
-                  <label for="fkCodEtapa">Codigo de etapa</label>
-                  <input type="number" class="form-control form-control-rounded" id="fkCodEtapa"
-                         th:field="*{fkCodEtapa}" min="1" placeholder="Codigo de etapa">
+                  <label for="fkCodEtapa">Etapa *</label>
+                  <select class="form-control form-control-rounded" id="fkCodEtapa"
+                          th:field="*{fkCodEtapa}" th:errorclass="is-invalid" required>
+                    <option value="">Seleccione una etapa...</option>
+                    <option th:each="etapa : ${etapas}"
+                            th:value="${etapa.codigoEtapa}"
+                            th:text="${etapa.tituloEtapa + (etapa.fkCodPlanAmbiental != null ? ' (Plan #' + etapa.fkCodPlanAmbiental + ')' : '')}">
+                    </option>
+                  </select>
+                  <small class="field-error"
+                         th:if="${#fields.hasErrors('fkCodEtapa')}"
+                         th:errors="*{fkCodEtapa}"></small>
                 </div>
               </div>
 
@@ -139,6 +154,74 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/localization/messages_es.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    var colorPicker = document.getElementById('colorSeccionPicker');
+    var colorHidden = document.getElementById('colorSeccion');
+    var defaultAlpha = 0.5;
+
+    var hexToRgba = function (hex, alpha) {
+      if (!hex) {
+        return '';
+      }
+
+      var normalized = hex.replace('#', '');
+      if (normalized.length === 3) {
+        normalized = normalized.split('').map(function (c) {
+          return c + c;
+        }).join('');
+      }
+
+      if (normalized.length !== 6) {
+        return '';
+      }
+
+      var r = parseInt(normalized.substring(0, 2), 16);
+      var g = parseInt(normalized.substring(2, 4), 16);
+      var b = parseInt(normalized.substring(4, 6), 16);
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+    };
+
+    var rgbaToHex = function (rgba) {
+      if (!rgba) {
+        return null;
+      }
+
+      var match = rgba.match(/rgba?\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})/i);
+      if (!match) {
+        return null;
+      }
+
+      var toHex = function (value) {
+        var intValue = Math.max(0, Math.min(255, parseInt(value, 10)));
+        return intValue.toString(16).padStart(2, '0');
+      };
+
+      return '#' + toHex(match[1]) + toHex(match[2]) + toHex(match[3]);
+    };
+
+    var syncColorRgba = function () {
+      if (!colorPicker || !colorHidden) {
+        return;
+      }
+      colorHidden.value = hexToRgba(colorPicker.value, defaultAlpha);
+    };
+
+    if (colorPicker && colorHidden) {
+      if (colorHidden.value) {
+        if (colorHidden.value.startsWith('rgba') || colorHidden.value.startsWith('rgb')) {
+          var fromRgba = rgbaToHex(colorHidden.value);
+          if (fromRgba) {
+            colorPicker.value = fromRgba;
+          }
+        } else if (colorHidden.value.startsWith('#')) {
+          colorPicker.value = colorHidden.value;
+        }
+      }
+
+      syncColorRgba();
+      colorPicker.addEventListener('input', syncColorRgba);
+      colorPicker.addEventListener('change', syncColorRgba);
+    }
+
     document.querySelectorAll('.form-group').forEach(function (group) {
       var field = group.querySelector('input:not([type="hidden"]):not([type="color"]), select, textarea');
       if (!field) {
@@ -186,8 +269,7 @@
             maxlength: 25
           },
           fkCodEtapa: {
-            digits: true,
-            min: 1
+            required: true
           }
         },
         messages: {
@@ -209,8 +291,7 @@
             maxlength: 'Maximo 25 caracteres'
           },
           fkCodEtapa: {
-            digits: 'Ingrese solo numeros en codigo de etapa',
-            min: 'El codigo de etapa debe ser mayor a 0'
+            required: 'Seleccione una etapa'
           }
         },
         errorElement: 'small',

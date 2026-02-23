@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "seccion_plan_ambiental")
@@ -36,6 +37,7 @@ public class SeccionPlanAmbientalEntity {
     private String colorSeccion;
 
     @Column(name = "fk_cod_etapa")
+    @NotNull(message = "Seleccione una etapa")
     private Long fkCodEtapa;
 
     @Column(name = "fecha_creado_seccion", nullable = false, insertable = false, updatable = false)
